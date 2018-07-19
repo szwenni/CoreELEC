@@ -1,0 +1,23 @@
+--- a/backports/v4.7_dma_attrs.patch	2018-07-20 01:29:31.830251477 +0200
++++ b/backports/v4.7_dma_attrs.patch	2018-07-20 01:32:45.348494834 +0200
+@@ -230,20 +230,6 @@
+  }
+  
+  /**
+-@@ -452,10 +455,12 @@ int bdisp_hw_alloc_nodes(struct bdisp_ctx *ctx)
+- 	unsigned int i, node_size = sizeof(struct bdisp_node);
+- 	void *base;
+- 	dma_addr_t paddr;
+-+	DEFINE_DMA_ATTRS(attrs);
+- 
+- 	/* Allocate all the nodes within a single memory page */
+-+	dma_set_attr(DMA_ATTR_WRITE_COMBINE, &attrs);
+- 	base = dma_alloc_attrs(dev, node_size * MAX_NB_NODE, &paddr,
+--			       GFP_KERNEL, DMA_ATTR_WRITE_COMBINE);
+-+			       GFP_KERNEL, &attrs);
+- 	if (!base) {
+- 		dev_err(dev, "%s no mem\n", __func__);
+- 		return -ENOMEM;
+ @@ -488,9 +493,13 @@ void bdisp_hw_free_filters(struct device *dev)
+  {
+  	int size = (BDISP_HF_NB * NB_H_FILTER) + (BDISP_VF_NB * NB_V_FILTER);
